@@ -1,5 +1,4 @@
-# Manufacturing Line Productivity Analysis: Technical Report
-
+# Manufacturing Line Productivity Analysis
 ## Project Objectives
 
 The primary goal of this analysis was to identify the root causes of production downtime on a key beverage bottling line. The objectives were:
