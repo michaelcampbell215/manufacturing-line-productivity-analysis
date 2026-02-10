@@ -1,4 +1,4 @@
-# Manufacturing Line Productivity Analysis
+# Production Throughput Model
 
 **Case Study: Manufacturing Excellence**
 
