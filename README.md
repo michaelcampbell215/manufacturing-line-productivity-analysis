@@ -1,67 +1,103 @@
 # Manufacturing Line Productivity Analysis
-## Project Objectives
 
-The primary goal of this analysis was to identify the root causes of production downtime on a key beverage bottling line. The objectives were:
+**Case Study: Manufacturing Excellence**
 
-1.  **Data Transformation:** To clean, unpivot, and merge multiple data sources into a single, analysis-ready dataset.
-2.  **Root Cause Analysis:** To identify the primary drivers of downtime, focusing on specific reasons, products, operators, and times of day.
-3.  **Performance Evaluation:** To analyze operator performance and identify specific challenges and training opportunities.
-4.  **Strategic Recommendations:** To provide data-driven recommendations to the plant manager to improve line efficiency, reduce downtime, and increase productivity.
+> **Executive Summary:**  
+> A high-volume beverage bottling line was experiencing unexplained downtime, impacting daily throughput. This analysis leveraged Power Query to consolidate disparate data logs, enabling a root cause analysis that identified "Inventory Shortages" and specific "Machine Adjustments" as the primary drivers of lost time—not operator speed, as previously hypothesized. The findings led to a data-backed recommendation for targeted preventative maintenance on the CO-600 line.
 
 ---
 
-## Part 1: ETL - Data Cleaning & Transformation (Power Query)
-
-The initial data was fragmented and required significant transformation to be useful for analysis. The entire ETL process was built in Power Query to create an automated and refreshable data pipeline.
-
-### 1. Unpivoting Downtime Data
-* **Challenge:** The `Line downtime` data was in a "wide" format with 12 separate columns for downtime factors, making it impossible to aggregate.
-* **Solution:** The **"Unpivot Columns"** feature in Power Query was used to transform these 12 columns into two: "Downtime Factor" and "Downtime (minutes)," creating a "tall" table where each row represents a single downtime event.
-
-### 2. Merging Data Sources
-* Multiple **"Merge Queries"** operations were performed to create a single, comprehensive fact table.
-    * The unpivoted downtime table was merged with `Downtime factors` to add clear text descriptions for each downtime reason.
-    * This enriched table was then merged with the `Line productivity` table on the `Batch` ID to link each downtime event to a specific product and operator.
-
-### 3. Handling Complex Calculations
-* **Overnight Shifts:** The initial `End Time` - `Start Time` calculation produced errors for batches that ran past midnight.
-    * **Solution:** A custom column was created using a conditional Power Query formula (`if [End Time] < [Start Time] then...`) to correctly calculate the `EndDateTime`. This involved combining `Date` and `Time` components and adding a day to the end date when a shift crossed midnight. This fixed all duration calculations.
-* **Efficiency Metric:** A custom `Efficiency` metric was calculated (`Min batch time / Actual Production Time`). This required creating several intermediate custom columns for `Total Batch Duration`, `Total Downtime per Batch`, and `Actual Production Time`. *Note: A data quality issue where batch durations perfectly matched the theoretical minimums was identified, preventing the final use of this metric.*
+| **Tools**           | **Impact**                  | **Focus**             | **Dataset**            |
+| :------------------ | :-------------------------- | :-------------------- | :--------------------- |
+| Excel & Power Query | Targeted Downtime Reduction | Operations Management | Beverage Bottling Line |
 
 ---
 
-## Part 2: Analysis & Visualization (PivotTables & Charts)
+## Interactive Dashboard
 
-With the data cleaned, PivotTables and PivotCharts were used to analyze the data from multiple dimensions.
+[**View the Interactive Excel Dashboard**](https://1drv.ms/x/c/8513fca8776bf8ff/IQRhRLvDsMjGT7rxot3wKRslAfgDdu3AakwudErYXIhGjtA)
 
-### 1. Identifying the "Vital Few" Problems
-* A **Pareto Chart** was created to visualize the 80/20 rule. It showed that the top 3 downtime reasons—**Machine Adjustment, Machine Failure, and Inventory Shortage**—were responsible for the vast majority of lost time.
-
-### 2. Pinpointing Problem Products and Operators
-* Simple bar charts immediately highlighted the key outliers:
-    * **Product:** The **`CO-600`** was identified as the single largest source of downtime.
-    * **Operator:** The analysis separated downtime into "Operator Error" and "Systemic Issues" to provide a fair assessment of performance and identify targeted training needs for specific tasks (e.g., Charlie with machine adjustments, Mac with batch changes).
-
-### 3. Analyzing Trends Over Time
-* A **Line & Column Combo Chart** was created to show downtime by the hour of the day. An average line was added for context.
-* **Insight:** This chart proved that downtime was not random, but clustered around peak production hours (12 PM, 2 PM, 7 PM).
-
-### 4. Creating an Actionable Summary Table
-* A dynamic summary table was built using the **`SUMIFS`** function, populated with a dynamic list of the Top 5 downtime reasons generated by the `INDEX`, `SORT`, and `SEQUENCE` functions.
-* **Multi-step conditional formatting** was applied to this table to visually distinguish between minor (<60 min), significant (>60 min), and critical (>90 min) downtime events.
+_(Note: This is a hosted Excel file. For the best experience, view in Excel Online)_
 
 ---
 
-## Part 3: Strategic Recommendations & Dashboard
+## The Analytical Process
 
-The final step was to synthesize all findings into an interactive dashboard and a set of clear recommendations for the plant manager.
+### 1. ETL & Data Transformation (Power Query)
 
-### Key Insights
-* The primary drivers of downtime are **systemic issues** (machine failures, inventory shortages), not just operator errors.
-* The **`CO-600` product** magnifies these systemic problems.
-* Operator issues are **specific and predictable**, occurring at certain times with certain tasks.
+**Leveraged Power Query to merge disparate data sources into a unified fact table.**
 
-### Final Recommendations
-1.  **Launch a Preventative Maintenance Review:** Focus investigative and maintenance efforts on the equipment used for the `CO-600` line.
-2.  **Investigate the Supply Chain:** Address the root cause of **Inventory Shortages**, which appear to be a planning or logistics issue.
-3.  **Implement Targeted Operator Training:** Provide focused, time-of-day specific training to operators on the tasks they struggle with most (e.g., Charlie on evening machine adjustments, Mac on pre-lunch batch changes).
+- **Unpivoting Downtime Data:** The raw data contained 12 separate columns for downtime. I used **"Unpivot Columns"** to transform this into a "tall" schema (Downtime Factor, Minutes), allowing for proper aggregation.
+- **Merging Sources:** Performed **"Merge Queries"** to join the `Line productivity` table with `Downtime factors`, linking specific downtime events to products and operators.
+- **Complex Calculations:**
+  - _Overnight Shifts:_ Created custom conditional logic (`if [End Time] < [Start Time] then...`) to correctly calculate durations for shifts crossing midnight.
+  - _Efficiency Metrics:_ Calculated `Efficiency` (`Min Batch Time / Actual Production Time`) to benchmark performance.
+
+### 2. Down-Time Segmentation
+
+**Partitioned downtime into "Operator-Controllable" and "Systemic" categories to ensure fair performance assessment.**
+
+- **Systemic Issues:** Isolated Machine Failures and Inventory Shortages, which proved to be the dominant factors.
+- **Operator Performance:** Separated "Systemic" from "Operator" downtime to avoid penalizing staff for equipment failure. This highlighted specific training needs (e.g., distinct challenges for Operator 'Charlie' vs. 'Mac').
+
+### 3. Root Cause Identification (Pareto Analysis)
+
+**Deployed Pareto analysis to isolate the "Vital Few" factors.**
+
+- **The 80/20 Rule:** Visualization confirmed that the top 3 downtime reasons—**Machine Adjustment, Machine Failure, and Inventory Shortage**—were responsible for the vast majority of lost time.
+
+---
+
+## Key Discoveries
+
+### 1. Downtime Drivers
+
+Identified that **Machine Adjustments** and **Inventory Shortages** were the primary bottlenecks, _not_ operator speed. The primary drivers are systemic.
+
+### 2. Productivity Levers
+
+The **CO-600 product line** demonstrated the highest variance in downtime. This specific format contributes disproportionately to line instability.
+
+### 3. Temporal Patterns
+
+Lost time is not random. It clusters around peak production hours (12 PM, 2 PM, 7 PM), suggesting that shift changes or break coverage may be contributing factors.
+
+---
+
+## Strategic Recommendations
+
+> **"Shift from reactive machine fixing to a preventative maintenance schedule prioritized for the CO-600 line equipment."**
+
+1.  **Preventative Maintenance:** Focus investigative efforts on `CO-600` line equipment.
+2.  **Supply Chain Investigation:** Address the root cause of Inventory Shortages (planning vs. logistics).
+3.  **Targeted Training:** Provide specific, time-of-day training for operators on the tasks they struggle with most.
+
+---
+
+## Technical Implementation
+
+### Data Structure
+
+The analysis is contained within a single Excel workbook with the following key components:
+
+- **`Raw_Data` Worksheet:** Contains the uncleaned production logs.
+- **`Power Query` Connections:**
+  - `Line_Productivity`: Fact table containing production runs.
+  - `Downtime_Factors`: Dimension table for downtime codes.
+- **`Data Dictionary`:** A CSV file defining the 12 downtime categories.
+
+### Setup Instructions
+
+1.  **Requirements:** Microsoft Excel 2016 or later (for Power Query support).
+2.  **Usage:**
+    - Open `Manufacturing_Line_Productivity_Analysis.xlsx`.
+    - Click **"Enable Content"** if prompted to allow data connections.
+    - Navigate to the **"Dashboard"** tab to interact with the slicers (Operator, Machine, Date).
+    - To view the ETL logic, go to `Data` -> `Queries & Connections` -> `Edit`.
+
+---
+
+## Contact
+
+**Questions on this Analysis?**
+[Email](mailto:mcam215@gmail.com) | [LinkedIn](https://linkedin.com/in/michaelcampbellanalyst) | [GitHub](https://github.com/michaelcampbell215)
