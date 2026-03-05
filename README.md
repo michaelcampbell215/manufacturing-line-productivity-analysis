@@ -1,103 +1,34 @@
-# Production Throughput Model
+# Production Throughput Model & Root Cause Analysis
 
-**Case Study: Manufacturing Excellence**
+## **Project Overview**
 
-> **Executive Summary:**  
-> A high-volume beverage bottling line was experiencing unexplained downtime, impacting daily throughput. This analysis leveraged Power Query to consolidate disparate data logs, enabling a root cause analysis that identified "Inventory Shortages" and specific "Machine Adjustments" as the primary drivers of lost time—not operator speed, as previously hypothesized. The findings led to a data-backed recommendation for targeted preventative maintenance on the CO-600 line.
+**The Chaos on the Ground:** A high-volume beverage bottling line (CO-600) was bleeding 15% to 20% of its daily capacity to unexplained downtime. Operations believed operator speed was the bottleneck, but lacking a unified view of disparate machine logs, they couldn't confidently target interventions.
+**The Solution:** I engineered a programmatic "Control Tower". Utilizing Excel Power Query for ETL processes, I merged unstandardized logs into a unified fact table, isolating root causes that directly impact inventory availability and operational throughput in a high-volume manufacturing environment.
 
----
+## **Data Sources**
 
-| **Tools**           | **Impact**                  | **Focus**             | **Dataset**            |
-| :------------------ | :-------------------------- | :-------------------- | :--------------------- |
-| Excel & Power Query | Targeted Downtime Reduction | Operations Management | Beverage Bottling Line |
+- **Manufacturing Execution System (MES) Exports:** Uncleaned shift production logs, machine downtime codes, and operator productivity metrics.
+- **Data Dictionary:** A CSV defining 12 strict downtime categorization codes.
 
----
+## **Process**
 
-## Interactive Dashboard
+- **ETL Engineering (Power Query):** Replaced manual spreadsheet merging with automated Power Query unpivoting to transform 12 distinct downtime columns into a clean, analytical schema.
+- **Downtime Segmentation Logic:** Partitioned downtime into "Operator-Controllable" vs "Systemic" to eliminate performance assessment bias and isolate hardware/supply chain failures.
+- **Root Cause Identification:** Conducted Pareto analysis of manufacturing bottling line downtime to identify the primary drivers of production delays and inventory shortages, mathematically isolating the "Vital Few" factors contributing to 80% of lost time.
 
-[**View the Interactive Excel Dashboard**](https://1drv.ms/x/c/8513fca8776bf8ff/IQRhRLvDsMjGT7rxot3wKRslAfgDdu3AakwudErYXIhGjtA)
+## **Key Findings**
 
-_(Note: This is a hosted Excel file. For the best experience, view in Excel Online)_
+- **Systemic Failure:** Identified that **Machine Adjustments** and **Inventory Shortages** accounted for the vast majority of lost time, completely debunking the "operator speed" hypothesis.
+- **Product Line Volatility:** The **CO-600 product format** was pinpointed as the source of extreme line instability, causing disproportionate downtime spikes.
+- **Temporal Friction:** Revealed that lost time clusters predictably around peak production hours (12 PM, 2 PM, 7 PM), highlighting shift-change vulnerabilities.
 
----
+## **Recommendations (Operational Scripts)**
 
-## The Analytical Process
+- **Preventative Maintenance Roadmap:** Shift immediately from reactive break-fix to a targeted preventative maintenance schedule focused exclusively on the CO-600 line equipment.
+- **Supply Chain Calibration:** Launch a cross-functional investigation into the root cause of Inventory Shortages to align material planning with true logistics lead times.
+- **Targeted Training:** Provide specific, time-of-day training interventions for operators focused on machine adjustment procedures, mapping to the identified temporal vulnerability windows.
 
-### 1. ETL & Data Transformation (Power Query)
+## **Next Steps**
 
-**Leveraged Power Query to merge disparate data sources into a unified fact table.**
-
-- **Unpivoting Downtime Data:** The raw data contained 12 separate columns for downtime. I used **"Unpivot Columns"** to transform this into a "tall" schema (Downtime Factor, Minutes), allowing for proper aggregation.
-- **Merging Sources:** Performed **"Merge Queries"** to join the `Line productivity` table with `Downtime factors`, linking specific downtime events to products and operators.
-- **Complex Calculations:**
-  - _Overnight Shifts:_ Created custom conditional logic (`if [End Time] < [Start Time] then...`) to correctly calculate durations for shifts crossing midnight.
-  - _Efficiency Metrics:_ Calculated `Efficiency` (`Min Batch Time / Actual Production Time`) to benchmark performance.
-
-### 2. Down-Time Segmentation
-
-**Partitioned downtime into "Operator-Controllable" and "Systemic" categories to ensure fair performance assessment.**
-
-- **Systemic Issues:** Isolated Machine Failures and Inventory Shortages, which proved to be the dominant factors.
-- **Operator Performance:** Separated "Systemic" from "Operator" downtime to avoid penalizing staff for equipment failure. This highlighted specific training needs (e.g., distinct challenges for Operator 'Charlie' vs. 'Mac').
-
-### 3. Root Cause Identification (Pareto Analysis)
-
-**Deployed Pareto analysis to isolate the "Vital Few" factors.**
-
-- **The 80/20 Rule:** Visualization confirmed that the top 3 downtime reasons—**Machine Adjustment, Machine Failure, and Inventory Shortage**—were responsible for the vast majority of lost time.
-
----
-
-## Key Discoveries
-
-### 1. Downtime Drivers
-
-Identified that **Machine Adjustments** and **Inventory Shortages** were the primary bottlenecks, _not_ operator speed. The primary drivers are systemic.
-
-### 2. Productivity Levers
-
-The **CO-600 product line** demonstrated the highest variance in downtime. This specific format contributes disproportionately to line instability.
-
-### 3. Temporal Patterns
-
-Lost time is not random. It clusters around peak production hours (12 PM, 2 PM, 7 PM), suggesting that shift changes or break coverage may be contributing factors.
-
----
-
-## Strategic Recommendations
-
-> **"Shift from reactive machine fixing to a preventative maintenance schedule prioritized for the CO-600 line equipment."**
-
-1.  **Preventative Maintenance:** Focus investigative efforts on `CO-600` line equipment.
-2.  **Supply Chain Investigation:** Address the root cause of Inventory Shortages (planning vs. logistics).
-3.  **Targeted Training:** Provide specific, time-of-day training for operators on the tasks they struggle with most.
-
----
-
-## Technical Implementation
-
-### Data Structure
-
-The analysis is contained within a single Excel workbook with the following key components:
-
-- **`Raw_Data` Worksheet:** Contains the uncleaned production logs.
-- **`Power Query` Connections:**
-  - `Line_Productivity`: Fact table containing production runs.
-  - `Downtime_Factors`: Dimension table for downtime codes.
-- **`Data Dictionary`:** A CSV file defining the 12 downtime categories.
-
-### Setup Instructions
-
-1.  **Requirements:** Microsoft Excel 2016 or later (for Power Query support).
-2.  **Usage:**
-    - Open `Manufacturing_Line_Productivity_Analysis.xlsx`.
-    - Click **"Enable Content"** if prompted to allow data connections.
-    - Navigate to the **"Dashboard"** tab to interact with the slicers (Operator, Machine, Date).
-    - To view the ETL logic, go to `Data` -> `Queries & Connections` -> `Edit`.
-
----
-
-## Contact
-
-**Questions on this Analysis?**
-[Email](mailto:mcam215@gmail.com) | [LinkedIn](https://www.linkedin.com/in/michaelcampbell215) | [GitHub](https://github.com/michaelcampbell215)
+- **Proactive Maintenance Alerts:** Evolve the analysis into a daily tracking dashboard that alerts maintenance supervisors when CO-600 downtime deviates from standard control limits.
+- **Golden Pipeline Iteration:** Fully automate the `Manufacturing_Line_Productivity_Analysis.xlsx` data flow via Python scripts to eliminate manual Power Query refresh cycles.
